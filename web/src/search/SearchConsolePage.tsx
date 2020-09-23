@@ -17,6 +17,7 @@ import { search } from './backend'
 import { ExtensionsControllerProps } from '../../../shared/src/extensions/controller'
 import { Omit } from 'utility-types'
 import { LoadingSpinner } from '@sourcegraph/react-loading-spinner'
+import { parseSearchURL } from '.'
 
 interface SearchConsolePageProps
     extends ThemeProps,
@@ -29,7 +30,9 @@ interface SearchConsolePageProps
 }
 
 export const SearchConsolePage: React.FunctionComponent<SearchConsolePageProps> = props => {
-    const searchQueries = useMemo(() => new BehaviorSubject<string>(''), [])
+    const parsedURL = parseSearchURL(location.search)
+    const searchQueries = useMemo(() => new BehaviorSubject<string>(parsedURL.query || ''), [parsedURL])
+    // const searchQueries = useMemo(() => new BehaviorSubject<string>(''), [])
     const [nextSearch, resultsOrError] = useEventObservable<'loading' | GQL.ISearchResults | ErrorLike>(
         useCallback(
             searchRequests =>
@@ -85,9 +88,11 @@ export const SearchConsolePage: React.FunctionComponent<SearchConsolePageProps> 
         }
         const disposable = editorInstance.onDidChangeModelContent(() => {
             searchQueries.next(editorInstance.getValue())
+            console.log('value is: ' + editorInstance.getValue())
+            props.history.push('/search/console?q=' + encodeURI(editorInstance.getValue()))
         })
         return () => disposable.dispose()
-    }, [editorInstance, searchQueries])
+    }, [editorInstance, searchQueries, props.history])
     return (
         <div className="w-100 p-2">
             <PageTitle title="Search console" />
