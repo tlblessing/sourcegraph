@@ -67,7 +67,7 @@ async function generateGraphQlOperations({ watch } = {}) {
   const generateOperations = {}
   for (const outfile of Object.keys(allGenerateOperations)) {
     const inputs = allGenerateOperations[outfile].documents
-    if (await isInputNewer(inputs, outfile)) {
+    if (watch || (await isInputNewer(inputs, outfile))) {
       generateOperations[path.join(ROOT_FOLDER, outfile)] = allGenerateOperations[outfile]
     } else {
       console.log(`skipping generation of ${outfile}, because all inputs were older`)
