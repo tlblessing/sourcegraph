@@ -21,7 +21,7 @@ const generate = gulp.parallel(schema, graphQlSchema, graphQlOperations)
  */
 const watchGenerate = gulp.series(
   gulp.parallel(schema, graphQlSchema),
-  gulp.parallel(watchSchema, watchGraphQlSchema, generateAndWatchGraphQlOperations),
+  gulp.parallel(watchSchema, watchGraphQlSchema, generateAndWatchGraphQlOperations)
 )
 
 /**
@@ -34,7 +34,7 @@ const build = gulp.series(generate, webWebpack)
  */
 const watch = gulp.series(
   gulp.parallel(schema, graphQlSchema),
-  gulp.parallel(watchSchema, watchGraphQlSchema, generateAndWatchGraphQlOperations, webWebpackDevServer),
+  gulp.parallel(watchSchema, watchGraphQlSchema, generateAndWatchGraphQlOperations, webWebpackDevServer)
 )
 
 module.exports = {
