@@ -9,7 +9,7 @@ const {
   graphQlOperations,
   schema,
   watchGraphQlSchema,
-  watchGraphQlOperations,
+  generateAndWatchGraphQlOperations,
   watchSchema,
 } = require('../shared/gulpfile')
 const webpackConfig = require('./webpack.config')
@@ -87,7 +87,7 @@ const build = gulp.series(gulp.parallel(schema, graphQlOperations, graphQlSchema
 const watch = gulp.series(
   // Ensure the typings that TypeScript depends on are build to avoid first-time-run errors
   gulp.parallel(schema, graphQlSchema),
-  gulp.parallel(watchSchema, watchGraphQlSchema, watchGraphQlOperations, webpackDevelopmentServer)
+  gulp.parallel(watchSchema, watchGraphQlSchema, generateAndWatchGraphQlOperations, webpackDevelopmentServer)
 )
 
 module.exports = { build, watch, webpackDevServer: webpackDevelopmentServer, webpack }

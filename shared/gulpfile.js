@@ -78,7 +78,7 @@ async function watchGraphQlSchema() {
 /**
  * Generates the new query-specific types on file changes.
  */
-async function watchGraphQlOperations() {
+async function generateAndWatchGraphQlOperations() {
   await generateGraphQlOperations({ watch: true })
 }
 
@@ -151,5 +151,5 @@ module.exports = {
   graphQlSchema,
   watchGraphQlSchema,
   graphQlOperations,
-  watchGraphQlOperations,
+  generateAndWatchGraphQlOperations,
 }
