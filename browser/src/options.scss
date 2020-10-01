@@ -2,6 +2,7 @@
 
 @import '../../shared/src/global-styles/colors.scss';
 @import '../../shared/src/global-styles/icons.scss';
+@import '../../shared/src/components/LoaderInput.scss';
 @import 'bootstrap/scss/functions';
 @import 'bootstrap/scss/variables';
 @import 'bootstrap/scss/mixins';
@@ -15,7 +16,6 @@
 @import 'bootstrap/scss/buttons';
 @import 'bootstrap/scss/button-group';
 @import 'bootstrap/scss/alert';
-@import './browser-extension/options-page/OptionsContainer';
 
 :root {
     // Use the same root size as the webapp to maintain consistency
