@@ -24,6 +24,7 @@ storiesOf('browser/Options/OptionsPage', module)
             onToggleActivated={action('onToggleActivated')}
             isActivated={true}
             sourcegraphUrl={text('sourcegraphUrl', 'https://sourcegraph.com')}
+            isFullPage={true}
         />
     ))
     .add('Interactive', () => {
@@ -36,6 +37,7 @@ storiesOf('browser/Options/OptionsPage', module)
                 validateSourcegraphUrl={validateSourcegraphUrl}
                 sourcegraphUrl={text('sourcegraphUrl', 'https://sourcegraph.com')}
                 isCurrentRepositoryPrivate={boolean('isCurrentRepositoryPrivate', false)}
+                isFullPage={true}
             />
         )
     })
@@ -49,6 +51,7 @@ storiesOf('browser/Options/OptionsPage', module)
                 validateSourcegraphUrl={invalidSourcegraphUrl}
                 sourcegraphUrl={text('sourcegraphUrl', 'https://not-sourcegraph.com')}
                 isCurrentRepositoryPrivate={boolean('isCurrentRepositoryPrivate', false)}
+                isFullPage={true}
             />
         )
     })
