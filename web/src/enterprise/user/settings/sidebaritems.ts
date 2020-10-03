@@ -1,4 +1,3 @@
-import TimelineTextOutlineIcon from 'mdi-react/TimelineTextOutlineIcon'
 import { userSettingsSideBarItems } from '../../../user/settings/sidebaritems'
 import { UserSettingsSidebarItems } from '../../../user/settings/UserSettingsSidebar'
 import { SHOW_BUSINESS_FEATURES } from '../../dotcom/productSubscriptions/features'
@@ -29,7 +28,6 @@ export const enterpriseUserSettingsSideBarItems: UserSettingsSidebarItems = {
         {
             to: '/event-log',
             label: 'Event log',
-            icon: TimelineTextOutlineIcon,
             condition: ({ user: { viewerCanAdminister } }) => viewerCanAdminister,
         },
     ],
