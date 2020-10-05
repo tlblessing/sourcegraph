@@ -13,6 +13,7 @@ import { android } from './repogroups/Android'
 import { stanford } from './repogroups/Stanford'
 import { BreadcrumbsProps, BreadcrumbSetters } from './components/Breadcrumbs'
 import { cncf } from './repogroups/cncf'
+import { GraphSelectionProps } from './enterprise/graphs/selector/graphSelectionProps'
 
 const SearchPage = lazyComponent(() => import('./search/input/SearchPage'), 'SearchPage')
 const SearchResults = lazyComponent(() => import('./search/results/SearchResults'), 'SearchResults')
@@ -23,6 +24,7 @@ const SearchConsolePage = lazyComponent(() => import('./search/SearchConsolePage
 interface LayoutRouteComponentProps<Params extends { [K in keyof Params]?: string }>
     extends RouteComponentProps<Params>,
         Omit<LayoutProps, 'match'>,
+        GraphSelectionProps,
         BreadcrumbsProps,
         BreadcrumbSetters {}
 
@@ -213,6 +215,11 @@ export const routes: readonly LayoutRouteProps<any>[] = [
         render: props => <RepogroupPage {...props} repogroupMetadata={stanford} />,
         condition: props => window.context.sourcegraphDotComMode,
     },
+    /* {
+        path: '/cncf',
+        render: lazyComponent(() => import('./namespaces/profile/NamespaceProfilePage'), 'NamespaceProfilePage'),
+        condition: (): boolean => window.context.sourcegraphDotComMode,
+    }, */
     {
         path: '/cncf',
         render: props => <RepogroupPage {...props} repogroupMetadata={cncf} />,

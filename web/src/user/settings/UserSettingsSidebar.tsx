@@ -64,6 +64,10 @@ export const UserSettingsSidebar: React.FunctionComponent<UserSettingsSidebarPro
                 </SiteAdminAlert>
             )}
 
+            <h2>
+                <Link to={props.user.url}>{props.user.username}</Link>
+            </h2>
+
             <SidebarGroup>
                 <SidebarGroupHeader label="User account" />
                 <SidebarGroupItems>

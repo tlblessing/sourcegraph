@@ -16,7 +16,7 @@ import { ThemeProps } from '../../../../shared/src/theme'
 import { RouteDescriptor } from '../../util/contributions'
 import { UserSettingsAreaRoute } from '../settings/UserSettingsArea'
 import { UserSettingsSidebarItems } from '../settings/UserSettingsSidebar'
-import { UserAreaHeader, UserAreaHeaderNavItem } from './UserAreaHeader'
+import { UserAreaSidebar } from './UserAreaSidebar'
 import { PatternTypeProps, OnboardingTourProps } from '../../search'
 import { TelemetryProps } from '../../../../shared/src/telemetry/telemetryService'
 import { AuthenticatedUser } from '../../auth'
@@ -25,6 +25,10 @@ import { BreadcrumbsProps, BreadcrumbSetters } from '../../components/Breadcrumb
 import { useObservable } from '../../../../shared/src/util/useObservable'
 import { requestGraphQL } from '../../backend/graphql'
 import { EditUserProfilePageGQLFragment } from '../settings/profile/UserSettingsProfilePage'
+import { NamespaceAreaContext } from '../../namespaces/NamespaceArea'
+import { GraphSelectionProps } from '../../enterprise/graphs/selector/graphSelectionProps'
+import { UserAreaTabs, UserAreaTabsNavItem } from './UserAreaTabs'
+import H from 'history'
 
 /** GraphQL fragment for the User fields needed by UserArea. */
 export const UserAreaGQLFragment = gql`
@@ -83,7 +87,9 @@ const fetchUser = (args: UserAreaVariables): Observable<UserAreaUserFields> =>
         })
     )
 
-export interface UserAreaRoute extends RouteDescriptor<UserAreaRouteContext> {}
+export interface UserAreaRoute extends RouteDescriptor<UserAreaRouteContext> {
+    hideNamespaceAreaSidebar?: boolean
+}
 
 interface UserAreaProps
     extends RouteComponentProps<{ username: string }>,
@@ -96,9 +102,10 @@ interface UserAreaProps
         OnboardingTourProps,
         BreadcrumbsProps,
         BreadcrumbSetters,
+        Pick<GraphSelectionProps, 'reloadGraphs'>,
         Omit<PatternTypeProps, 'setPatternType'> {
     userAreaRoutes: readonly UserAreaRoute[]
-    userAreaHeaderNavItems: readonly UserAreaHeaderNavItem[]
+    userAreaHeaderNavItems: readonly UserAreaTabsNavItem[]
     userSettingsSideBarItems: UserSettingsSidebarItems
     userSettingsAreaRoutes: readonly UserSettingsAreaRoute[]
 
@@ -125,6 +132,7 @@ export interface UserAreaRouteContext
         OnboardingTourProps,
         BreadcrumbsProps,
         BreadcrumbSetters,
+        NamespaceAreaContext,
         Omit<PatternTypeProps, 'setPatternType'> {
     /** The user area main URL. */
     url: string
@@ -148,6 +156,9 @@ export interface UserAreaRouteContext
     userSettingsAreaRoutes: readonly UserSettingsAreaRoute[]
 
     isSourcegraphDotCom: boolean
+
+    location: H.Location
+    history: H.History
 }
 
 /**
@@ -203,25 +214,25 @@ export const UserArea: React.FunctionComponent<UserAreaProps> = ({
         ...childBreadcrumbSetters,
     }
 
-    const routeMatch = userAreaRoutes.find(({ path, exact }) =>
+    const matchedRoute = userAreaRoutes.find(({ path, exact }) =>
         matchPath(props.location.pathname, { path: url + path, exact })
-    )?.path
+    )
 
-    // Hide header and use full-width container for campaigns pages.
-    const isCampaigns = routeMatch === '/campaigns'
-    const hideHeader = isCampaigns
+    const isSettingsArea = matchedRoute?.path === '/settings'
+    const isMainProfilePage = matchedRoute?.path === ''
 
     return (
-        <div className="user-area w-100">
-            {!hideHeader && (
-                <UserAreaHeader
-                    {...props}
+        <div className="container mt-4 d-flex flex-wrap">
+            {!matchedRoute?.hideNamespaceAreaSidebar && !isSettingsArea && (
+                <UserAreaSidebar {...context} className="mr-4" />
+            )}
+            <div>
+                <UserAreaTabs
                     {...context}
                     navItems={props.userAreaHeaderNavItems}
-                    className="border-bottom mt-4"
+                    size={isMainProfilePage ? 'large' : 'small'}
+                    className="mb-3"
                 />
-            )}
-            <div className="container mt-3">
                 <ErrorBoundary location={props.location}>
                     <React.Suspense fallback={<LoadingSpinner className="icon-inline m-2" />}>
                         <Switch>
