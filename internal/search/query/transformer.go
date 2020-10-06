@@ -464,8 +464,26 @@ func substituteOrForRegexp(nodes []Node) []Node {
 	return new
 }
 
+type callback func([]Pattern) Pattern
+
+func cb(patterns []Pattern) Pattern {
+	var values []string
+	for _, p := range patterns {
+		values = append(values, p.Value)
+	}
+	// FIXME annotation
+	/*
+		return Pattern{
+			Value: strings.Join(values, " "),
+		}
+	*/
+	return Pattern{
+		Value: "(" + strings.Join(values, ").*(") + ")",
+	}
+}
+
 // substituteConcat reduces a concatenation of patterns to a separator-separated string.
-func substituteConcat(nodes []Node, separator string) []Node {
+func substituteConcat(nodes []Node, callback callback) []Node {
 	isPattern := func(node Node) bool {
 		if pattern, ok := node.(Pattern); ok && !pattern.Negated {
 			return true
@@ -480,39 +498,30 @@ func substituteConcat(nodes []Node, separator string) []Node {
 		case Operator:
 			if v.Kind == Concat {
 				// Merge consecutive patterns.
+				pp := []Pattern{}
 				previous := v.Operands[0]
-				merged := Pattern{}
 				if p, ok := previous.(Pattern); ok {
-					merged = p
+					pp = append(pp, p)
 				}
 				for _, node := range v.Operands[1:] {
 					if isPattern(node) && isPattern(previous) {
 						p := node.(Pattern)
-						if merged.Value != "" {
-							merged.Annotation.Labels |= p.Annotation.Labels
-							merged = Pattern{
-								Value:      merged.Value + separator + p.Value,
-								Annotation: merged.Annotation,
-							}
-						} else {
-							// Base case.
-							merged = Pattern{Value: p.Value}
-						}
+						pp = append(pp, p)
 						previous = node
 						continue
 					}
-					if merged.Value != "" {
-						newNode = append(newNode, merged)
-						merged = Pattern{}
+					if len(pp) > 0 {
+						newNode = append(newNode, callback(pp))
+						pp = []Pattern{}
 					}
-					newNode = append(newNode, substituteConcat([]Node{node}, separator)...)
+					newNode = append(newNode, substituteConcat([]Node{node}, callback)...)
 				}
-				if merged.Value != "" {
-					newNode = append(newNode, merged)
-					merged = Pattern{}
+				if len(pp) > 0 {
+					newNode = append(newNode, callback(pp))
+					pp = []Pattern{}
 				}
 			} else {
-				newNode = append(newNode, newOperator(substituteConcat(v.Operands, separator), v.Kind)...)
+				newNode = append(newNode, newOperator(substituteConcat(v.Operands, callback), v.Kind)...)
 			}
 		}
 	}

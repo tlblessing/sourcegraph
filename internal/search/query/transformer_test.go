@@ -240,6 +240,10 @@ func TestSubstituteConcat(t *testing.T) {
 			want:  `"a b c d e f"`,
 		},
 		{
+			input: `foo\d "bar*"`,
+			want:  `"foo\\d bar*"`,
+		},
+		{
 			input: "a (b and c) d",
 			want:  `"a" (and "b" "c") "d"`,
 		},
@@ -255,7 +259,7 @@ func TestSubstituteConcat(t *testing.T) {
 	for _, c := range cases {
 		t.Run("Map query", func(t *testing.T) {
 			query, _ := ParseAndOr(c.input, SearchTypeRegex)
-			got := prettyPrint(substituteConcat(query, " "))
+			got := prettyPrint(substituteConcat(query, cb))
 			if diff := cmp.Diff(c.want, got); diff != "" {
 				t.Fatal(diff)
 			}
