@@ -94,6 +94,7 @@ export const RepogroupPage: React.FunctionComponent<RepogroupPageProps> = (props
                 className="repogroup-page__logo"
                 icon={props.repogroupMetadata.homepageIcon}
                 text={props.repogroupMetadata.title}
+                style={props.repogroupMetadata.homepageIconStyles}
             />
             <div className="repogroup-page__subheading">
                 {props.repogroupMetadata.lowProfile ? (

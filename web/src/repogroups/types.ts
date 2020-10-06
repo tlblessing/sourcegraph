@@ -1,4 +1,5 @@
 import { SearchPatternType } from '../graphql-operations'
+import CSS from 'csstype'
 
 export interface ExampleQuery {
     title: string
@@ -35,6 +36,10 @@ export interface RepogroupMetadata {
      * Base64 data uri to an icon.
      */
     homepageIcon: string
+    /**
+     * Styles for the `homepageIcon`.
+     */
+    homepageIconStyles?: CSS.Properties
     /**
      * A description when displayed on the search homepage.
      */
