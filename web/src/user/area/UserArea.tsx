@@ -220,18 +220,17 @@ export const UserArea: React.FunctionComponent<UserAreaProps> = ({
 
     const isSettingsArea = matchedRoute?.path === '/settings'
     const isMainProfilePage = matchedRoute?.path === ''
+    const showSidebar = !isSettingsArea && !matchedRoute?.hideNamespaceAreaSidebar
 
     return (
         <div className="container mt-4 d-flex flex-wrap">
-            {!matchedRoute?.hideNamespaceAreaSidebar && !isSettingsArea && (
-                <UserAreaSidebar {...context} className="mr-4" />
-            )}
-            <div>
+            {showSidebar && <UserAreaSidebar {...context} className="mr-4" />}
+            <div className="flex-1">
                 <UserAreaTabs
                     {...context}
                     navItems={props.userAreaHeaderNavItems}
                     size={isMainProfilePage ? 'large' : 'small'}
-                    className="mb-3"
+                    className="mb-3" // TODO(sqs)
                 />
                 <ErrorBoundary location={props.location}>
                     <React.Suspense fallback={<LoadingSpinner className="icon-inline m-2" />}>

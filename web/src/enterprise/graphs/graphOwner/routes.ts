@@ -5,7 +5,7 @@ import { GraphIcon } from '../icons'
 
 const COMMON: Pick<NamespaceAreaRoute, 'condition' | 'hideNamespaceAreaSidebar'> = {
     condition: () => window.context?.graphsEnabled,
-    hideNamespaceAreaSidebar: true,
+    hideNamespaceAreaSidebar: false,
 }
 
 export const graphOwnerAreaRoutes: readonly NamespaceAreaRoute[] = [

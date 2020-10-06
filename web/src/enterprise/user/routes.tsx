@@ -30,6 +30,5 @@ export const enterpriseUserAreaRoutes: readonly UserAreaRoute[] = [
         path: '/campaigns',
         render: props => <UserCampaignsArea {...props} userID={props.user.id} />,
         condition: props => !props.isSourcegraphDotCom && window.context.campaignsEnabled,
-        hideNamespaceAreaSidebar: true,
     },
 ]

@@ -1,74 +1,40 @@
 import React from 'react'
 import { Observable } from 'rxjs'
-import { filter, map } from 'rxjs/operators'
+import { map } from 'rxjs/operators'
 import { View, ViewContexts } from '../../../../../shared/src/api/client/services/viewService'
 import { dataOrThrowErrors, gql } from '../../../../../shared/src/graphql/graphql'
-import { parseRepoURI } from '../../../../../shared/src/util/url'
 import { requestGraphQL } from '../../../backend/graphql'
-import { RepoBranchesResult, RepoBranchesVariables } from '../../../graphql-operations'
-import { DirectoryViewContext, URI } from 'sourcegraph'
-import { DeepReplace, isDefined } from '../../../../../shared/src/util/types'
-import { gitReferenceFragments, GitReferenceNode } from '../../GitReference'
+import { NamespaceSavedSearchesResult, NamespaceSavedSearchesVariables } from '../../../graphql-operations'
 import { pluralize } from '../../../../../shared/src/util/strings'
 import { ContributableViewContainer } from '../../../../../shared/src/api/protocol'
 
 export const namespaceSavedSearches = ({
-    id,
-    type,
+    id:_id,
 }: ViewContexts[typeof ContributableViewContainer.Profile]): Observable<View | null> => {
-    const savedSearchesData = requestGraphQL<RepoBranchesResult, RepoBranchesVariables>(
+    const savedSearches = requestGraphQL<NamespaceSavedSearchesResult, NamespaceSavedSearchesVariables>(
         gql`
-            query RepoBranches($repoName: String!, $first: Int!, $withBehindAhead: Boolean!) {
-                repository(name: $repoName) {
-                    defaultBranch {
-                        ...GitRefFields
-                    }
-                    branches: gitRefs(
-                        orderBy: AUTHORED_OR_COMMITTED_AT
-                        type: GIT_BRANCH
-                        first: $first
-                        interactive: true
-                    ) {
-                        nodes {
-                            ...GitRefFields
-                        }
-                        totalCount
-                    }
+            query NamespaceSavedSearches {
+                savedSearches {
+                    id
+                    description
+                    query
+                    notify
                 }
             }
-            ${gitReferenceFragments}
         `,
-        { repoName, first: 10, withBehindAhead: true }
+        {  }
     ).pipe(
         map(dataOrThrowErrors),
-        map(data => data.repository)
+        map(data => data.savedSearches)
     )
 
-    return branchesData.pipe(
-        filter(isDefined),
-        map(({ defaultBranch, branches }) => ({
-            title: `${branches.totalCount} ${pluralize('branch', branches.totalCount, 'branches')}`,
-            titleLink: `/${repoName}/-/branches`,
+    return savedSearches.pipe(
+        map(savedSearches => ({
+            title: `${savedSearches.length} ${pluralize('saved search', savedSearches.length, 'saved searches')}`,
+            titleLink: 'TODO',
             content: [
                 {
-                    reactComponent: () => (
-                        <div>
-                            {defaultBranch && (
-                                <GitReferenceNode
-                                    node={defaultBranch}
-                                    showBehindAhead={false}
-                                    className="border-0 pt-0 pb-1"
-                                >
-                                    <small className="text-muted">Default branch</small>
-                                </GitReferenceNode>
-                            )}
-                            {branches.nodes
-                                .filter(branch => branch.id !== defaultBranch?.id)
-                                .map(branch => (
-                                    <GitReferenceNode key={branch.id} node={branch} className="border-0 pt-0 pb-1" />
-                                ))}
-                        </div>
-                    ),
+                    reactComponent: () => <div>Saved searches: ${JSON.stringify(savedSearches)}</div>,
                 },
             ],
         }))

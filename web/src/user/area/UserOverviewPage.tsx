@@ -32,7 +32,11 @@ interface Props
 /**
  * The user overview page.
  */
-export const UserOverviewPage: React.FunctionComponent<Props> = ({ extensionsController: { services }, ...props }) => {
+export const UserOverviewPage: React.FunctionComponent<Props> = ({
+    user,
+    extensionsController: { services },
+    ...props
+}) => {
     useEffect(() => eventLogger.logViewEvent('UserOverview'), [])
 
     const views = useObservable(
@@ -41,19 +45,18 @@ export const UserOverviewPage: React.FunctionComponent<Props> = ({ extensionsCon
                 getViewsForContainer(
                     ContributableViewContainer.Profile,
                     {
-                        viewer: {
-                            type: 'Profile',
-                        },
+                        id: user.id,
+                        type: user.__typename,
                     },
                     services.view
                 ),
-            [services.view]
+            [services.view, user.__typename, user.id]
         )
     )
 
     return (
         <div className="user-page user-overview-page">
-            <PageTitle title={props.user.username} />
+            <PageTitle title={user.username} />
             {views && <ViewGrid {...props} className="mb-5" viewGridStorageKey="user-profile-page" views={views} />}
         </div>
     )

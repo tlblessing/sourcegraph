@@ -82,7 +82,7 @@ export const UserSettingsSidebar: React.FunctionComponent<UserSettingsSidebarPro
                 </SidebarGroupItems>
             </SidebarGroup>
 
-            {(props.user.organizations.nodes.length > 0 || !siteAdminViewingOtherUser) && (
+            {(props.user.organizations.nodes.length > 0 || !siteAdminViewingOtherUser) && false /* TODO(sqs) */ && (
                 <SidebarGroup>
                     <SidebarGroupHeader label="Organizations" />
                     <SidebarGroupItems>
